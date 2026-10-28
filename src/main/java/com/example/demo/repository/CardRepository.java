@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface CardRepository extends JpaRepository<Card, Long> {
 
     long countByDeckIdAndLocation(Long deckId, CardLocation location);
+    long countByDeckIdAndOwnerIdAndLocation(Long deckId, Long ownerId, CardLocation location);
 
     @Query(value = """
         SELECT *

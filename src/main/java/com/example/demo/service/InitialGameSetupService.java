@@ -33,7 +33,8 @@ public class InitialGameSetupService {
             );
         }
 
-        for (User player : gameSession.getPlayers()) {
+        for (GameSessionPlayer sessionPlayer : gameSession.getPlayers()) {
+            User player = sessionPlayer.getUser();
             for (int i = 0; i < initialHandCards; i++) {
                 Card card = takeDeckCard(deck.getId());
                 card.setLocation(CardLocation.HAND);

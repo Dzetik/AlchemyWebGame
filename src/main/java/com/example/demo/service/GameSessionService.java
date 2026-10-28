@@ -25,28 +25,11 @@ public class GameSessionService {
     }
 
     @Transactional
-    public GameSessionResponse updateStatus(Long gameSessionId, Long userId, GameSessionStatus status) {
-        GameSession gameSession = gameSessionAccessService.getGameSessionForPlayer(gameSessionId, userId);
-        gameSession.setStatus(status);
-        GameSessionResponse response = toResponse(gameSession);
-
-        eventPublisher.publishEvent(
-                new GameUpdatedEvent(
-                        "GAME_UPDATED",
-                        gameSession.getId(),
-                        response
-                )
-        );
-
-        return response;
-    }
-
-    @Transactional
     public GameSessionResponse finishGame(Long gameSessionId, Long userId) {
         GameSession gameSession = gameSessionAccessService.getGameSessionForPlayer(gameSessionId, userId);
 
-        if (gameSession.getStatus() == GameSessionStatus.FINISHED) {
-            throw new ConflictException("Игра уже завершена");
+        if (gameSession.getStatus() != GameSessionStatus.ACTIVE) {
+            throw new ConflictException("Завершить можно только активную игру");
         }
 
         gameSession.setStatus(GameSessionStatus.FINISHED);
@@ -67,8 +50,8 @@ public class GameSessionService {
         List<GameSessionPlayerResponse> players = gameSession.getPlayers()
                 .stream()
                 .map(player -> new GameSessionPlayerResponse(
-                        player.getId(),
-                        player.getName()
+                        player.getUser().getId(),
+                        player.getUser().getName()
                 ))
                 .toList();
 

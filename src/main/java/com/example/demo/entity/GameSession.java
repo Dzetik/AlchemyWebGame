@@ -31,13 +31,13 @@ public class GameSession {
     )
     private Deck deck;
 
-    @ManyToMany
-    @JoinTable(
-            name = "game_session_players",
-            joinColumns = @JoinColumn(name = "game_session_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+    @OneToMany(
+            mappedBy = "gameSession",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private List<User> players = new ArrayList<>();
+    @OrderBy("id ASC")
+    private List<GameSessionPlayer> players = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

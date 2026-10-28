@@ -29,4 +29,11 @@ public class GameState {
 
     @Column(nullable = false)
     private long revision = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "current_player_id")
+    private User currentPlayer;
+
+    @Column(nullable = false)
+    private long turnNumber = 1;
 }

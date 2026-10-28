@@ -159,11 +159,11 @@ class DeckIntegrationTest {
                 .isEqualTo(1);
 
         assertThat(cards)
-                .allMatch(card -> !card.getIngridients().isEmpty());
+                .allMatch(card -> !card.getIngredients().isEmpty());
 
         assertThat(cards)
                 .allMatch(card ->
-                        card.getIngridients()
+                        card.getIngredients()
                                 .stream()
                                 .allMatch(ingredient ->
                                         ingredient.getType() == IngredientType.ELEMENT

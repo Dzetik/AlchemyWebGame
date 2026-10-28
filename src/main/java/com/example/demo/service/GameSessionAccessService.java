@@ -23,7 +23,7 @@ public class GameSessionAccessService {
         boolean isPlayer = gameSession.getPlayers()
                 .stream()
                 .anyMatch(player ->
-                        player.getId().equals(userId)
+                        player.getUser().getId().equals(userId)
                 );
 
         if (!isPlayer) {

@@ -226,7 +226,9 @@ public class LobbyService {
 
         GameSession gameSession = new GameSession();
         gameSession.setLobby(lobby);
-        gameSession.setPlayers(new ArrayList<>(lobby.getPlayers()));
+        for (User user : lobby.getPlayers()) {
+            gameSession.getPlayers().add(new GameSessionPlayer(gameSession, user));
+        }
         gameSession.setStatus(GameSessionStatus.ACTIVE);
         gameSession.setStartedAt(LocalDateTime.now());
 

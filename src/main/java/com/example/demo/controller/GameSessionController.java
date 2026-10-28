@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.game.CardDrawResponse;
 import com.example.demo.dto.game.GameSessionResponse;
 import com.example.demo.dto.game.GameStateResponse;
+import com.example.demo.dto.game.TurnResponse;
 import com.example.demo.entity.GameSessionStatus;
 import com.example.demo.service.CardDrawService;
 import com.example.demo.service.GameSessionService;
@@ -66,47 +67,6 @@ public class GameSessionController {
         return ResponseEntity.ok(gameStateService.getState(id, userId));
     }
 
-    @PatchMapping("/{id}/state")
-    @Operation(
-            summary = "Обновить состояние игры",
-            description = "Тестовое изменение GameState с отправкой GAME_STATE_UPDATED"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Состояние обновлено"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Пользователь не является участником игры"),
-            @ApiResponse(responseCode = "404", description = "Игра или её состояние не найдены"),
-            @ApiResponse(responseCode = "409", description = "Игра уже завершена")
-    })
-    public ResponseEntity<GameStateResponse> updateGameState(
-            @PathVariable Long id,
-            Authentication authentication) {
-
-        Long userId = (Long) authentication.getPrincipal();
-        return ResponseEntity.ok(gameStateService.updateState(id, userId));
-    }
-
-    @PatchMapping("/{id}/status")
-    @Operation(
-            summary = "Изменить статус игровой сессии",
-            description = "Тестовая операция для проверки GAME_UPDATED"
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Статус изменён"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Пользователь не является участником игры"),
-            @ApiResponse(responseCode = "404", description = "Игровая сессия не найдена")
-    })
-    public ResponseEntity<GameSessionResponse> updateStatus(
-            @Parameter(description = "ID игровой сессии", example = "1")
-            @PathVariable Long id,
-            @RequestParam GameSessionStatus status,
-            Authentication authentication) {
-
-        Long userId = (Long) authentication.getPrincipal();
-        return ResponseEntity.ok(gameSessionService.updateStatus(id, userId, status));
-    }
-
     @PatchMapping("/{id}/finish")
     @Operation(
             summary = "Завершить игровую сессию",
@@ -147,6 +107,39 @@ public class GameSessionController {
 
         Long userId = (Long) authentication.getPrincipal();
         return ResponseEntity.ok(cardDrawService.drawCard(id, userId));
+    }
+
+    @GetMapping("/{id}/turn")
+    @Operation(summary = "Получить текущий ход")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Текущий ход получен"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Пользователь не является участником игры"),
+            @ApiResponse(responseCode = "404", description = "Игра или состояние игры не найдены")
+    })
+    public ResponseEntity<TurnResponse> getTurn(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        Long userId = (Long) authentication.getPrincipal();
+        return ResponseEntity.ok(gameStateService.getTurn(id, userId));
+    }
+
+    @PostMapping("/{id}/turn/end")
+    @Operation(summary = "Завершить текущий ход и передать ход следующему игроку")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ход завершён, передан следующему игроку"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Пользователь не является участником игры"),
+            @ApiResponse(responseCode = "404", description = "Игра или состояние игры не найдены"),
+            @ApiResponse(responseCode = "409", description = "Игра не запущена или сейчас не ваш ход")
+    })
+    public ResponseEntity<TurnResponse> endTurn(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        Long userId = (Long) authentication.getPrincipal();
+        return ResponseEntity.ok(gameStateService.endTurn(id, userId));
     }
 
 }

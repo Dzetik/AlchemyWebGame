@@ -51,10 +51,10 @@ public class DeckCompositionService {
                 card.setLocation(CardLocation.DECK);
 
                 if (isMultiIngredientCard(recipe)) {
-                    card.getIngridients().addAll(selectDistinctElements(elements, 3));
+                    card.getIngredients().addAll(selectDistinctElements(elements, 3));
                 }
                 else {
-                    card.getIngridients().add(elementPool.get(elementIndex++));
+                    card.getIngredients().add(elementPool.get(elementIndex++));
                 }
 
                 deck.getCards().add(card);
